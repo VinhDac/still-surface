@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Still surface: the vega penalty and the half day</title>
+<meta name="description" content="A validation note on Lucic and Tse's option market-making model: the example's vega penalty protects the close, not the half day. By Dac Vinh Nguyen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f4ef; --paper2:#efece4; --ink:#1b2430; --soft:#3f4a58; --dim:#717b88; --rule:#d8d2c5;
+  --terminal:#b5541c; --running:#1f6fb2; --light:#8db3d9; --still:#8a94a3;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:19px;line-height:1.58;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--running);text-decoration:none;border-bottom:1px solid rgba(31,111,178,.3)}
+a:hover{border-bottom-color:var(--running)}
+.num{font-family:var(--mono);font-size:.86em;letter-spacing:-.01em;white-space:nowrap}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+.wide{max-width:1000px;margin:0 auto;padding:0 20px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+
+/* hero: the surface, still or moving */
+.hero{position:relative;padding:56px 0 18px;border-bottom:1px solid var(--rule)}
+h1{font-weight:600;font-size:clamp(34px,5.6vw,62px);line-height:1.04;letter-spacing:-.01em;margin:14px 0 12px;max-width:15em}
+h1 em{font-style:italic;font-weight:500;color:var(--terminal)}
+.sub{font-size:20px;color:var(--soft);max-width:36em;margin:0 0 22px}
+.by{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.by a{color:var(--dim);border-bottom-color:var(--rule)}
+.surface{margin:26px 0 6px;position:relative}
+#smiles{width:100%;height:300px;display:block}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.modes button,.picks button{font:500 13px var(--mono);color:var(--soft);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:6px 12px;cursor:pointer}
+.modes button[aria-pressed="true"],.picks button[aria-pressed="true"]{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+.legend{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
+
+/* findings */
+ol.findings{counter-reset:f;list-style:none;padding:0;margin:30px 0 8px}
+ol.findings li{counter-increment:f;position:relative;padding:0 0 16px 46px}
+ol.findings li::before{content:counter(f);position:absolute;left:0;top:2px;font:500 13px var(--mono);width:28px;height:28px;border:1px solid var(--rule);border-radius:50%;display:grid;place-items:center;color:var(--soft)}
+ol.findings b{font-weight:600}
+
+h2{font-weight:600;font-size:30px;line-height:1.15;margin:58px 0 10px;letter-spacing:-.005em}
+h2 .eyebrow{display:block;margin-bottom:6px}
+p{margin:0 0 14px}
+.muted{color:var(--soft)}
+figure{margin:24px 0}
+figcaption{font-size:15.5px;color:var(--soft);margin-top:8px;line-height:1.45}
+
+/* the ribbon: the book's vega through the session */
+.picks{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+.picks button[data-kind="terminal"][aria-pressed="true"]{background:var(--terminal);border-color:var(--terminal)}
+.picks button[data-kind="running"][aria-pressed="true"]{background:var(--running);border-color:var(--running)}
+#ribbon,#frontier{width:100%;display:block;background:var(--paper2);border-radius:4px}
+.readout{font-family:var(--mono);font-size:13px;color:var(--soft);margin-top:8px;min-height:2.6em}
+
+table{border-collapse:collapse;width:100%;font-size:16px;margin:16px 0}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--rule);vertical-align:baseline}
+th:first-child,td:first-child{text-align:left}
+thead th{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim);border-bottom:1.5px solid var(--ink)}
+td.num,td .num{font-size:14.5px}
+.scroll{overflow-x:auto}
+
+.note{border-left:2px solid var(--rule);padding:2px 0 2px 16px;color:var(--soft);font-size:17px}
+ul.next{padding-left:20px}
+ul.next li{margin-bottom:8px}
+footer{margin:70px 0 0;padding:26px 0 60px;border-top:1px solid var(--rule);font-size:15px;color:var(--soft)}
+footer .by{display:block;margin-top:10px}
+@media (max-width:640px){
+  body{font-size:17.5px}
+  .hero{padding-top:34px}
+  #smiles{height:220px}
+  h2{font-size:25px}
+  table{font-size:14.5px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">A validation note &middot; option market-making</div>
+    <h1>The vega penalty protects the close, <em>not the half day</em></h1>
+    <p class="sub">Lucic and Tse's model for an options book (Risk.net, 2025) says its risk controls make the strategy resilient to moves of the implied volatility surface. Its own example holds the surface still. Here it moves.</p>
+    <div class="by">Dac Vinh Nguyen &middot; {{date}} &middot; <a href="{{repo_url}}">code and checks</a> &middot; <a href="{{pdf_url}}">the note as a PDF</a></div>
+  </div>
+  <div class="wide surface">
+    <canvas id="smiles" aria-label="The implied volatility smiles of the example at four maturities, still or moving"></canvas>
+    <div class="modes" role="group" aria-label="How the surface moves">
+      <button type="button" data-mode="still" aria-pressed="true">still, as the example</button>
+      <button type="button" data-mode="term" aria-pressed="false">moving, each maturity by its loading</button>
+      <button type="button" data-mode="parallel" aria-pressed="false">moving, every maturity alike</button>
+    </div>
+    <div class="legend" id="smiles-legend">implied vol against strike, 90% to 110% of spot, at 3 months, 6 months, 1 year and 3 years</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <ol class="findings">
+    <li><b>The example reproduces.</b> The baseline's mean half-day value is <span class="num">{{a_base_mean}}</span> against about <span class="num">{{fig_base}}</span> read off the paper's Figure 1(b), and all <span class="num">{{a_rules}}</span> shapes the figure shows hold.</li>
+    <li><b>The surface's moves add risk the example does not show.</b> With each maturity moving by its own loading on the VIX, the standard deviation of the half day's value goes from <span class="num">{{b_still_std}}</span> to <span class="num">{{b_term_std}}</span>; if every maturity moved as far as the VIX, to <span class="num">{{b_par_std}}</span>.</li>
+    <li><b>The example's penalty works at the close.</b> Ten times the terminal penalty cuts the risk the closing book carries into the next half day by <span class="num">{{x10_carried_term_cut}}</span> (<span class="num">{{x10_carried_par_cut}}</span> if every maturity moved alike), and the risk the move brings during the session by <span class="num">{{x10_in_term_cut}}</span>. A hundred times cuts the latter by <span class="num">{{x100_in_term_cut}}</span>.</li>
+    <li><b>The running penalty does the in-session work.</b> The paper defines it; the example sets it to zero. On the vega the move loads on, it cuts the in-session risk by <span class="num">{{rt_in_term_cut}}</span> for <span class="num">{{rt_cost}}</span> of mean value, where ten times the terminal penalty costs <span class="num">{{x10_cost}}</span>.</li>
+    <li><b>The closed form's approximation holds at the half day.</b> {{hjb_summary}}</li>
+  </ol>
+
+  <h2><span class="eyebrow">1 &middot; the half day, drawn</span>Where the book holds its vega</h2>
+  <p>The ribbon is the book's percentage-vega through the session, its root mean square over {{b_paths}} paths on a still surface, drawn above and below a line. The paper's penalty, <span class="num">&alpha;</span>, is charged on the book at the close; a running penalty, <span class="num">&beta;</span>, is charged all session. Pick one and compare it with the paper's, the grey outline.</p>
+  <div class="picks" role="group" aria-label="Which penalty">{{picks}}</div>
+  <svg id="ribbon" viewBox="0 0 900 300" role="img" aria-label="The book's vega through the half day"></svg>
+  <div class="readout" id="ribbon-readout"></div>
+  <p>Ten times the terminal penalty keeps the book's vega within <span class="num">{{x10_gap}}</span> of the baseline's for the first seven tenths of the session, then pulls it to <span class="num">{{x10_close}}</span> at the close, where the baseline holds <span class="num">{{base_vega_close}}</span>: the inventory term of the quotes, <span class="num">&Theta;<sub>2</sub></span>, is <span class="num">&minus;A</span> at the close and fades as the close recedes. A running penalty holds <span class="num">&Theta;<sub>2</sub></span> near a level of its own however far the close is, so it leans on the book all day. Its price is written <span class="num">r/T</span>: at <span class="num">r = &alpha;</span> it charges a session of holding a vega what <span class="num">&alpha;</span> charges for holding it past the close.</p>
+
+  <h2><span class="eyebrow">2 &middot; cost against risk</span>What each penalty buys</h2>
+  <p>The cost of a penalty is the mean value it gives up on a still surface, path by path against the baseline; the fills and the spot are the same for every penalty. What it buys is the in-session risk it takes away: the spread of what the surface's move did to its own trades. Each line is one kind of penalty at growing strength.</p>
+  <svg id="frontier" viewBox="0 0 900 440" role="img" aria-label="Cost against in-session risk for each penalty"></svg>
+  <div class="readout" id="frontier-readout">Point at a dot for its numbers.</div>
+  <div class="scroll"><table>
+    <thead><tr><th>penalty (the paper's &alpha; unless named)</th><th>cost</th><th>in-session risk cut, by maturity</th><th>parallel</th><th>carried risk cut, by maturity</th><th>parallel</th></tr></thead>
+    <tbody>{{t3_rows}}</tbody>
+  </table></div>
+  <p>The factor matters as much as the strength. The paper's buckets penalise the at-the-money buckets lightly, where most of the vega sits. On the vega the move loads on, each option's percentage-vega times its maturity's loading, <span class="num">0.2/T</span> costs <span class="num">{{rt_cost}}</span>; on the book's whole vega the same price costs <span class="num">{{rtot_cost}}</span>, because it also leans on long-dated vega the move barely touches.</p>
+
+  <h2><span class="eyebrow">3 &middot; how the surface moves</span>Short maturities move most</h2>
+  <p>Through the half day the surface shifts along a Brownian bridge to a day's change of the VIX scaled to half a day: <span class="num">{{vix_days}}</span> daily changes from {{vix_first}} to {{vix_last}}, a half-day standard deviation of <span class="num">{{vix_half}}</span> vol points. On the same <span class="num">{{d_days}}</span> days, the VIX3M moved <span class="num">{{d_slope}}</span> of a point for each point of the VIX (correlation <span class="num">{{d_corr}}</span>), between <span class="num">{{d_low}}</span> and <span class="num">{{d_high}}</span> in three separate stretches of those years. A power law through 30 and 93 days gives the book's maturities these loadings; past 93 days it is an assumption.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>maturity</th><th>3 months</th><th>6 months</th><th>1 year</th><th>3 years</th></tr></thead>
+    <tbody><tr><td>vol points moved for one point of the VIX</td><td class="num">{{load_3m}}</td><td class="num">{{load_6m}}</td><td class="num">{{load_1y}}</td><td class="num">{{load_3y}}</td></tr></tbody>
+  </table></div>
+  <p>The quotes depend on time and inventory only, so a run with a moving surface trades exactly as the still run on the same paths, and the difference is what the move did to that book. The skew is held still in these numbers; a labelled scenario moving it adds little.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>half-day value, {{b_paths}} paths</th><th>mean</th><th>std</th><th>1% quantile</th><th>worst 1%</th></tr></thead>
+    <tbody>{{t2_rows}}</tbody>
+  </table></div>
+
+  <h2><span class="eyebrow">4 &middot; the example, rebuilt</span>Against the paper's Figure 1</h2>
+  <p>Everything is the paper's except the implied vol surface, shown only as Figure 1(a) (its numbers are in the authors' SSRN paper 4729290, which I did not use). I read <span class="num">{{surface_points}}</span> points off the figure and fitted a four-parameter form, within <span class="num">{{surface_resid}}</span> vol points of every point read. The quotes are the paper's (18) with (19) and (20).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>strategy</th><th>Figure 1(b), by eye</th><th>mean</th><th>std</th><th>trades</th></tr></thead>
+    <tbody>{{t1_rows}}</tbody>
+  </table></div>
+
+  <h2><span class="eyebrow">5 &middot; the closed form</span>Its approximation, checked</h2>
+  {{hjb_html}}
+
+  <h2><span class="eyebrow">6 &middot; before production</span>What I would test next</h2>
+  <ul class="next">
+    <li>Order flow that reacts to the surface's moves, and spot and vol that move together; here both are independent of the move.</li>
+    <li>The surface the paper used and loadings past three months read from longer indices, in place of a figure read by eye and a power law.</li>
+    <li>The running penalty's factor and price chosen from the desk's own P&amp;L attribution: the factor the surface actually moves on, priced so that the in-session risk it leaves is the risk the desk means to run.</li>
+  </ul>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>The paper: <a href="https://discovery.ucl.ac.uk/id/eprint/10207338/">author manuscript at UCL Discovery</a>. Data: FRED, series VIXCLS and VXVCLS (Cboe). {{checks_line}}</p>
+    <span class="by">Dac Vinh Nguyen &middot; <a href="{{repo_url}}">{{repo}}</a> &middot; <a href="{{pdf_url}}">PDF</a></span>
+  </div>
+</footer>
+
+<script>
+const DATA = {{data_json}};
+{{script}}
+</script>
+</body>
+</html>

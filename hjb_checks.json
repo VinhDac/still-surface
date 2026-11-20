@@ -1,0 +1,22 @@
+{
+ "held": 16,
+ "of": 16,
+ "checks": [
+  "psi2_solves_its_riccati_equation",
+  "psi1_solves_its_equation",
+  "the_closed_quotes_are_5_on_the_ansatz",
+  "one_option_is_model_optimal_on_a_book_of_one",
+  "without_a_penalty_6_is_solved_by_hand",
+  "without_penalty_edge_or_imbalance_both_quote_one_over_kappa",
+  "exact_is_the_linear_solution",
+  "the_jacobians_are_the_derivatives",
+  "the_exact_quotes_give_h_back",
+  "the_closed_form_never_beats_the_optimum",
+  "doubling_Q_moves_nothing_near_zero",
+  "constant_quotes_have_their_value_by_hand",
+  "the_law_of_constant_quotes_is_skellam",
+  "with_no_penalty_the_book_drifts_long",
+  "the_law_keeps_its_mass_on_a_small_grid",
+  "compare_reports_what_its_pieces_give"
+ ]
+}

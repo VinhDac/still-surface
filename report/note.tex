@@ -1,0 +1,88 @@
+\documentclass[10pt]{article}
+\input{style.tex}
+\newcommand{\paper}[1]{#1}  % a section, figure or footnote of the paper: its digits are names, not results
+\begin{document}
+
+{\sffamily\bfseries\LARGE The vega penalty protects the close, not the half day\par}
+\vspace{3pt}
+{\large A validation note on Lucic and Tse, \emph{Option market-making and vol arbitrage}, Risk.net (\given{2025})\par}
+\vspace{3pt}
+{\small\color{quiet}Dac Vinh Nguyen \quad\textbullet\quad \val{date} \quad\textbullet\quad code, data steps and checks: \href{\val{repo-url}}{\val{repo}} \quad\textbullet\quad page: \href{\val{page-url}}{\val{page}}\par}
+\vspace{6pt}
+
+\begin{summary}
+The abstract says factor-based risk controls make the strategy more resilient to unexpected moves of the implied volatility surface. The numerical example of \paper{section 3.2} holds the surface still. I rebuilt the example, then let the surface move through the half day by amounts read from the VIX and the VIX3M.
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+\item \textbf{The example reproduces.} The baseline's mean half-day value is \val{a-base-mean} against about \val{fig-base} read off \paper{Figure 1(b)}; all \val{a-rules} shapes the figure shows hold.
+\item \textbf{The surface's moves add risk the example does not show.} With each maturity moving by its own loading on the VIX, the standard deviation of the half day's value goes from \val{b-still-std} to \val{b-term-std}; if every maturity moved as far as the VIX, an upper bound, to \val{b-par-std}.
+\item \textbf{The example's penalty works at the close.} Ten times the terminal penalty cuts the risk the closing book carries into the next half day by \val{x10-carried-term-cut} (\val{x10-carried-par-cut} if every maturity moved alike), and the risk the move brings during the session by \val{x10-in-term-cut}. A hundred times cuts the latter by \val{x100-in-term-cut}.
+\item \textbf{The running penalty does the in-session work.} The paper defines it and the example sets it to zero. Put on the vega the move loads on, it cuts the in-session risk by \val{rt-in-term-cut} for \val{rt-cost} of mean value, where ten times the terminal penalty costs \val{x10-cost}.
+\item \textbf{The closed form's approximation holds at the half day.} \val{hjb-summary}
+\end{enumerate}
+\end{summary}
+
+\section{The example, rebuilt}
+Everything is the paper's except the implied vol surface, shown only as \paper{Figure 1(a)} (its numbers are in Lucic and Tse (\given{2024}), \paper{SSRN 4729290}, which I did not use). I read \val{surface-points} points off the figure and fitted a four-parameter form, within \val{surface-resid} vol points of every point read. The quotes are \eq{18} with \eq{19} and \eq{20}; an order arrives on each side with probability $\given{1}-e^{-\lambda e^{-\kappa\delta}\Delta t}$ a step; the book is delta-hedged at implied vol and the spot moves with the trader's \given{17}\% vol. Each of the \val{a-paths} paths is the same for every strategy.
+
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\heavyrule
+& \paper{Figure 1(b)}, by eye & mean & std & trades \\
+\hline
+\val{t1-rows}
+\heavyrule
+\end{tabular}
+\end{center}
+
+The zero-intelligence makers that earn the most build the largest vega: the \given{0.1}\% maker ends the half day with \val{zi01-vega} of percentage-vega on average, the baseline with \val{base-vega-close} in root mean square.
+
+\section{Moving the surface}
+Through the half day the surface shifts along a Brownian bridge to a day's change of the VIX scaled to half a day: \val{vix-days} daily changes from \val{vix-first} to \val{vix-last}, a half-day standard deviation of \val{vix-half} vol points. A longer maturity moves less. On the same \val{d-days} days the VIX3M moved \val{d-slope} of a point for each point of the VIX (correlation \val{d-corr}), and as little as \val{d-low} and as much as \val{d-high} in three separate stretches of those years. A power law through \given{30} and \given{93} days gives the book's maturities loadings of \val{load-3m}, \val{load-6m}, \val{load-1y} and \val{load-3y}; past \given{93} days that is an assumption. The quotes depend on time and inventory only, so a run with a moving surface trades exactly as the still run on the same paths (\val{same-trades}), and the difference between them is what the move did to that book. The skew is held still here; moving it by a labelled scenario adds little (\val{skew-std}).
+
+\begin{center}\small
+\begin{tabular}{lrrrr}
+\heavyrule
+half-day value, \val{b-paths} paths & mean & std & \given{1}\% quantile & worst \given{1}\% \\
+\hline
+\val{t2-rows}
+\heavyrule
+\end{tabular}
+\end{center}
+
+\section{What each penalty buys, and what it costs}
+The cost of a penalty is the mean value it gives up on a still surface, path by path against the baseline. What it buys is measured twice: the in-session risk, the standard deviation of what the move did to its own trades, and the carried risk, what its closing book gains or loses if the surface moves once more over the next half day.
+
+\begin{center}
+\includegraphics[width=0.49\linewidth]{fig-vega.pdf}\hfill
+\includegraphics[width=0.49\linewidth]{fig-frontier.pdf}
+\end{center}
+\figlabel{Left: the book's percentage-vega through the session, root mean square over the paths, still surface. Right: each penalty's cost against the in-session risk it leaves, with each maturity moving by its own loading. Lines join one kind of penalty at growing strength.}
+
+The terminal penalty's pull on inventory, $\Theta_2$ of \eq{19}, is $-A$ at the close and fades as the close recedes; a running penalty $B$ holds $\Theta_2$ near a level set by $B$ however far the close is, so it leans on the book all session. That is the left panel: ten times the terminal penalty keeps the book's vega within \val{x10-gap} of the baseline's for the first seven tenths of the session (\val{x10-mid} against \val{base-mid} at mid-session), then pulls it to \val{x10-close} at the close, where the baseline holds \val{base-vega-close}; a running penalty on the book's whole vega holds it near \val{rtot-mid} from the first tenth of the session to the close. The price of a running penalty is written $r/T$: at $r=\alpha$ it charges a session of holding a vega what $\alpha$ charges for holding it past the close.
+
+\begin{center}\small
+\begin{tabular}{lrrrrr}
+\heavyrule
+& & \multicolumn{2}{c}{in-session risk cut} & \multicolumn{2}{c}{carried risk cut} \\
+penalty, with the paper's $\alpha$ unless named & cost & by maturity & parallel & by maturity & parallel \\
+\hline
+\val{t3-rows}
+\heavyrule
+\end{tabular}
+\end{center}
+
+The factor matters as much as the strength. The paper's buckets put a small penalty on the at-the-money buckets, where most of the vega sits, so a running penalty on them priced like the terminal one buys less than one on the vega the move loads on. And the right factor is cheap: on the vega the move loads on, each option's percentage-vega times its maturity's loading, \given{0.2}$/T$ costs \val{rt-cost}, while on the book's whole vega the same price costs \val{rtot-cost}, because it also leans on long-dated vega the move barely touches.
+
+\section{The closed form's approximation}
+\val{hjb-text}
+
+\section{What I would test before production}
+\begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+\item Order flow that reacts to the surface's moves, and spot and vol that move together; here both are independent of the move.
+\item The surface the paper used (\paper{SSRN 4729290}) and loadings past three months read from longer indices, in place of a figure read by eye and a power law.
+\item The running penalty's factor and price chosen from the desk's own P\&L attribution: the factor the surface actually moves on, priced so that the in-session risk it leaves is the risk the desk means to run.
+\end{itemize}
+
+{\small\color{quiet}The paper: author manuscript, \url{https://discovery.ucl.ac.uk/id/eprint/10207338/}. Data: FRED, series VIXCLS and VXVCLS (Cboe). \val{checks-line}\par}
+
+\end{document}

@@ -1,0 +1,54 @@
+% The note's look, with only the packages this MiKTeX already has (no geometry, booktabs or caption).
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{tcolorbox}
+
+% Links by pdfTeX's own primitives (hyperref needs packages this MiKTeX does not have).
+\newcommand{\href}[2]{\pdfstartlink attr{/Border[0 0 0]} user{/Subtype/Link/A<</Type/Action/S/URI/URI(#1)>>}#2\pdfendlink}
+\let\plainurl\url
+\renewcommand{\url}[1]{\href{#1}{\plainurl{#1}}}
+
+% A4 with 2 cm side margins, set by hand.
+\setlength{\paperwidth}{210mm}\setlength{\paperheight}{297mm}
+\setlength{\pdfpagewidth}{\paperwidth}\setlength{\pdfpageheight}{\paperheight}
+\setlength{\textwidth}{170mm}\setlength{\oddsidemargin}{-0.4mm}\setlength{\evensidemargin}{-0.4mm}
+\setlength{\topmargin}{-12mm}\setlength{\headheight}{0pt}\setlength{\headsep}{0pt}
+\setlength{\textheight}{252mm}\setlength{\footskip}{10mm}
+\setlength{\parindent}{0pt}\setlength{\parskip}{4pt plus 1pt}
+\linespread{1.04}
+\pagestyle{plain}
+
+\definecolor{ink}{HTML}{1B2430}
+\definecolor{quiet}{HTML}{5B6573}
+\definecolor{rule}{HTML}{C9CED6}
+\definecolor{wash}{HTML}{F3F5F8}
+\definecolor{still}{HTML}{8A94A3}
+\definecolor{terminal}{HTML}{B5541C}
+\definecolor{running}{HTML}{1F6FB2}
+\color{ink}
+
+% Section heads in the sans of Latin Modern, small and tight.
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}{-9pt plus -2pt}{3pt}{\sffamily\bfseries\large}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-6pt plus -2pt}{2pt}{\sffamily\bfseries}}
+\renewcommand{\@seccntformat}[1]{\csname the#1\endcsname\hspace{0.6em}}
+\makeatother
+
+% Numbers: \val{name} is a value build_report.py wrote from the results; \eq{n} an equation of the
+% paper; \given{x} one of the paper's own parameters.
+\input{numbers.tex}
+\newcommand{\val}[1]{\ifcsname val@#1\endcsname\csname val@#1\endcsname\else\textbf{??#1}\fi}
+\newcommand{\eq}[1]{(#1)}
+\newcommand{\given}[1]{#1}
+
+% Tables with rules of two weights, by hand.
+\newcommand{\heavyrule}{\noalign{\global\arrayrulewidth=0.8pt}\hline\noalign{\global\arrayrulewidth=0.4pt}}
+\newcommand{\lightrule}{\noalign{\color{rule}}\hline\noalign{\color{ink}}}
+\renewcommand{\arraystretch}{1.12}
+
+\newtcolorbox{summary}{colback=wash, colframe=wash, arc=0pt, boxrule=0pt, left=8pt, right=8pt, top=6pt, bottom=6pt}
+\newcommand{\figlabel}[1]{\par\vspace{2pt}{\small\color{quiet}#1}\par}

@@ -1,0 +1,30 @@
+{
+ "held": 24,
+ "of": 24,
+ "checks": [
+  "the_book_is_table_1",
+  "the_surface_is_figure_1a",
+  "the_greeks_agree_with_differences",
+  "theta2_solves_its_riccati_equation",
+  "theta1_solves_its_equation",
+  "with_no_penalty_the_quote_is_spread_and_edge",
+  "the_penalty_leans_against_inventory",
+  "a_held_option_earns_the_vol_carry",
+  "fills_follow_the_intensity",
+  "a_move_of_nothing_changes_nothing",
+  "a_rising_surface_pays_a_long_vega_book",
+  "the_closing_book_carries_its_vega",
+  "the_skew_move_is_the_3_month_spread",
+  "the_vix_series_is_whole",
+  "the_vega_path_ends_at_the_close",
+  "the_example_reproduces",
+  "the_penalty_matrix_is_the_papers",
+  "the_numerical_solve_is_the_closed_form",
+  "a_running_penalty_gives_the_papers_scalar_riccati",
+  "theta_solve_their_equations_with_a_running_penalty",
+  "the_running_penalty_holds_the_vega_down_all_session",
+  "the_term_loading_is_the_vix3m_slope",
+  "a_term_move_moves_long_maturities_less",
+  "the_frontier_measures_against_the_baseline"
+ ]
+}
